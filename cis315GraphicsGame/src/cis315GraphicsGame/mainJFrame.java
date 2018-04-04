@@ -122,7 +122,7 @@ public class mainJFrame extends JFrame {
 		});
 		menuBar.add(mnDraw);
 
-		JMenuItem mntmCircle = new JMenuItem("Circle");
+		JMenuItem mntmCircle = new JMenuItem("Oval");
 		mntmCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// start drawing an Oval
