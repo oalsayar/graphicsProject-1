@@ -33,6 +33,18 @@ import java.awt.event.MouseAdapter;
 
 /**
  * @author atmanning - atmanning@dbq.edu
+ * 
+ * (replace this header with your information)
+ * 
+ * This is the starting point for a Java-based
+ * CAD program.  Although not a pure Model-View-Controller
+ * (MVC) program, you are encouraged to separate
+ * the drawing code from the file-saving/reading code.
+ * Try to keep the drawing methods isolated to myPanel.
+ * 
+ *  The initial graphic layout was done with the
+ *  Eclipse designer to make it easier to adjust the
+ *  look of the main page.
  *
  */
 public class mainJFrame extends JFrame {
@@ -43,14 +55,9 @@ public class mainJFrame extends JFrame {
 	// from all ActionHandlers
 	JTextArea textAreaHistory;
 	Label labelDebug; // for displaying status
-	myPanel panelDraw; // need access to this from paint()
+	drawingPanel panelDraw; // need access to this from paint()
 	ArrayList<Shape> myDrawing = new ArrayList<>();
 
-	// variables needed for drawing
-	boolean isDrawing = false; // set true when drawing
-	boolean isDrawingMouseDown = false; // when drawing object
-	Point pntStart = new Point(); // starting point on click-drag
-	Cursor prevCursor; // for storage of previous cursor
 
 	/**
 	 * Launch the application.
@@ -118,20 +125,11 @@ public class mainJFrame extends JFrame {
 		JMenuItem mntmCircle = new JMenuItem("Circle");
 		mntmCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				// start drawing a Circle
-				textAreaHistory.append("drawing Circle\n");
-				labelDebug.setText("circle...");
-				// change the cursor to indicate drawing
-				isDrawing = true;
+				// start drawing an Oval
+				textAreaHistory.append("drawing Oval\n");
+				labelDebug.setText("oval...");
 
-				// store cursor for later restore
-				prevCursor = panelDraw.getCursor();
-
-				// drawing begins with mouse click-drag
-				// in the panel
-				// drawing ends with mouse-release
-				// add circle Object to drawing list
-				// (panel paint() method draws this)
+				panelDraw.drawStart("Oval");
 			}
 		});
 		mnDraw.add(mntmCircle);
@@ -140,62 +138,38 @@ public class mainJFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		panelDraw = new myPanel();
+		panelDraw = new drawingPanel();
 		panelDraw.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// store this location and start drawing
-				pntStart.setLocation(e.getPoint());
-				isDrawingMouseDown = true;
+
+				panelDraw.dragStart(e);
+
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// end the shape if being drawn
-				if (isDrawing) {
-					isDrawing = false; // done drawing
-					textAreaHistory.append("Oval Done\n");
-					panelDraw.myShapes.add(new Oval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y));
 
-					// restore the panel Cursor
-					panelDraw.setCursor(prevCursor);
-					
-					// force a repaint here
-					panelDraw.repaint();
-					
-					// the paint() method should draw everything in myDrawing
-					// force a repaint here
-				}
-
+				panelDraw.mouseReleased( e );
 			}
 		});
 
 		panelDraw.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
+	
+				labelDebug.setText("m:" + e.getX() + "," + e.getY());
 
-				if (isDrawing) {
-					// got some help from StackOverflow for this
-					panelDraw.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-					labelDebug.setText("m:" + e.getX() + "," + e.getY());
-				}
+				panelDraw.mouseMoved( e );
+
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				// draw circle if mouse dragging
-				// start point is mouse down
-				if (isDrawing) {
-					// only if a shape in progress
-					labelDebug.setText("d:" + e.getX() + "," + e.getY());
+				labelDebug.setText("d:" + e.getX() + "," + e.getY());
 
-					// draw circle from startpoint to here
-					Graphics g = panelDraw.getGraphics();
-
-					g.drawOval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
-					// the oval doesn't become permanent until
-					// the mouse is released
-				}
+				panelDraw.mouseDragged(e );
 
 			}
 		});
