@@ -48,11 +48,17 @@ public class drawingPanel extends Panel {
 			// will need to handle multiple shapes here
 			//g.drawOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
 			
+			// first draw the filled shape
 			g.setColor(sh.colorFill);
-			g.fillOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
 			
+			// add 1 to x,y due to outline width
+			g.fillOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x + 1, sh.pntLR.y - sh.pntUL.y + 1);
+			
+			// now the outline
 			g.setColor(sh.colorOutline);
 			g.drawOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
+			
+			// todo:  set text color and draw if the shape contains text
 
 		}
 	}
@@ -113,16 +119,33 @@ public class drawingPanel extends Panel {
 		if (isDrawing) {
 			isDrawing = false; // done drawing
 			
-			Oval thisShape = new Oval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
+			// oval width and height cannot be negative - correct if needed
+			int xStart = pntStart.x;
+			int width = e.getX() - pntStart.x;
+				
+			if( width < 0 ) {
+				xStart += width;
+				width = -width;
+			}
+			
+			int yStart = pntStart.y;
+			int height = e.getY() - pntStart.y;
+			if( height < 0 ) {
+				yStart += height;
+				height = -height;
+			}
+				
+			
+			Oval thisShape = new Oval(xStart, yStart, width, height );
+			// set this shape's colors
 			thisShape.setColors(this.colorShapeOutline,this.colorShapeFill);
-			thisShape.colorFill = this.colorShapeFill;
-			thisShape.colorOutline = this.colorShapeOutline;
+
 			this.myShapes.add( thisShape );
 
 			// restore the panel Cursor
 			this.setCursor(prevCursor);
 			
-			// force a repaint here
+			// force a repaint of this panel
 			this.repaint();
 			
 			// the paint() method should draw everything in myDrawing
@@ -149,11 +172,28 @@ public class drawingPanel extends Panel {
 			// draw circle from startpoint to here
 			Graphics g = this.getGraphics();
 			
+			// oval width and height cannot be negative - correct if needed
+			int xStart = pntStart.x;
+			int width = e.getX() - pntStart.x;
+				
+			if( width < 0 ) {
+				xStart += width;
+				width = -width;
+			}
+			
+			int yStart = pntStart.y;
+			int height = e.getY() - pntStart.y;
+			if( height < 0 ) {
+				yStart += height;
+				height = -height;
+			}
+				
+			
 			g.setColor(this.colorShapeFill);
-			g.fillOval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
+			g.fillOval(xStart, yStart, width+1 , height+1);  // add 1 for outline width
 			
 			g.setColor(this.colorShapeOutline);
-			g.drawOval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
+			g.drawOval(xStart, yStart, width , height);
 			// the oval doesn't become permanent until
 			// the mouse is released
 		}
