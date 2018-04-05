@@ -3,12 +3,15 @@
  */
 package cis315GraphicsGame;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
+import javax.swing.JColorChooser;
 
 /**
  * @author atmanning - atmanning@dbq.edu
@@ -25,6 +28,8 @@ public class drawingPanel extends Panel {
 	boolean isDrawingMouseDown = false; // when drawing object
 	Point pntStart = new Point(); // starting point on click-drag
 	Cursor prevCursor; // for storage of previous cursor
+	Color colorShapeFill = Color.WHITE;
+	Color colorShapeOutline = Color.black;
 
 	private static final long serialVersionUID = 1L;
 	ArrayList<Shape> myShapes = new ArrayList<>();
@@ -41,6 +46,12 @@ public class drawingPanel extends Panel {
 		for (Shape sh : myShapes) {
 			// for starters, everything is an oval
 			// will need to handle multiple shapes here
+			//g.drawOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
+			
+			g.setColor(sh.colorFill);
+			g.fillOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
+			
+			g.setColor(sh.colorOutline);
 			g.drawOval(sh.pntUL.x, sh.pntUL.y, sh.pntLR.x - sh.pntUL.x, sh.pntLR.y - sh.pntUL.y);
 
 		}
@@ -50,6 +61,29 @@ public class drawingPanel extends Panel {
 		myShapes.add(sh);
 	}
 	
+	void setColorShapeOutline( Color c ) {
+		this.colorShapeOutline = c;
+	}
+	
+	void setColorShapeFill( Color c ) {
+		this.colorShapeFill = c;
+	}
+	
+	void chooseColorOutline() {
+		Color c = JColorChooser.showDialog(
+                null,
+                "Choose Outline Color",
+                this.getBackground());
+		this.colorShapeOutline = c;
+	}
+	
+	void chooseColorFill() {
+		Color c = JColorChooser.showDialog(
+                null,
+                "Choose Outline Color",
+                this.getBackground());
+		this.colorShapeFill = c;
+	}
 	
 	public void drawStart( String shapeName ) {
 		
@@ -79,7 +113,11 @@ public class drawingPanel extends Panel {
 		if (isDrawing) {
 			isDrawing = false; // done drawing
 			
-			this.myShapes.add(new Oval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y));
+			Oval thisShape = new Oval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
+			thisShape.setColors(this.colorShapeOutline,this.colorShapeFill);
+			thisShape.colorFill = this.colorShapeFill;
+			thisShape.colorOutline = this.colorShapeOutline;
+			this.myShapes.add( thisShape );
 
 			// restore the panel Cursor
 			this.setCursor(prevCursor);
@@ -110,7 +148,11 @@ public class drawingPanel extends Panel {
 
 			// draw circle from startpoint to here
 			Graphics g = this.getGraphics();
-
+			
+			g.setColor(this.colorShapeFill);
+			g.fillOval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
+			
+			g.setColor(this.colorShapeOutline);
 			g.drawOval(pntStart.x, pntStart.y, e.getX() - pntStart.x, e.getY() - pntStart.y);
 			// the oval doesn't become permanent until
 			// the mouse is released

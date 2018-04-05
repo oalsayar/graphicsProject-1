@@ -8,6 +8,7 @@ import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -50,6 +51,7 @@ import java.awt.event.MouseAdapter;
 public class mainJFrame extends JFrame {
 
 	private JPanel contentPane;
+	Color colorOutline;
 
 	// these items declared here for global access
 	// from all ActionHandlers
@@ -81,7 +83,7 @@ public class mainJFrame extends JFrame {
 	public mainJFrame() {
 		setTitle("graphicsDrawing");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 628, 336);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -133,6 +135,33 @@ public class mainJFrame extends JFrame {
 			}
 		});
 		mnDraw.add(mntmCircle);
+		
+		JMenu mnColors = new JMenu("Colors");
+		menuBar.add(mnColors);
+		
+		JMenuItem mntmColorchooser = new JMenuItem("Outline...");
+		mntmColorchooser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// new colorJDialog().setVisible(true);
+				
+
+				panelDraw.chooseColorOutline();
+				
+			}
+		});
+		mnColors.add(mntmColorchooser);
+		
+		JMenuItem mntmFill = new JMenuItem("Fill...");
+		mntmFill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Color c = JColorChooser.showDialog(
+	                     contentPane,
+	                     "Choose Outline Color",
+	                     panelDraw.getBackground());
+				panelDraw.setColorShapeFill(c);
+			}
+		});
+		mnColors.add(mntmFill);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -174,24 +203,23 @@ public class mainJFrame extends JFrame {
 			}
 		});
 		panelDraw.setBackground(SystemColor.window);
-		panelDraw.setBounds(12, 10, 301, 219);
+		panelDraw.setBounds(12, 10, 488, 256);
 		contentPane.add(panelDraw);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(330, 36, 96, 153);
+		scrollPane.setBounds(506, 36, 96, 153);
 		contentPane.add(scrollPane);
-
-		textAreaHistory = new JTextArea();
-		scrollPane.setViewportView(textAreaHistory);
-		textAreaHistory.setBackground(new Color(240, 255, 255));
+		
+				textAreaHistory = new JTextArea();
+				scrollPane.setViewportView(textAreaHistory);
+				textAreaHistory.setBackground(new Color(240, 255, 255));
 
 		Label label = new Label("History");
-		label.setBounds(329, 10, 58, 20);
+		label.setBounds(526, 10, 58, 20);
 		contentPane.add(label);
 
 		labelDebug = new Label("Debug...");
-		labelDebug.setBounds(329, 209, 58, 20);
+		labelDebug.setBounds(506, 195, 58, 20);
 		contentPane.add(labelDebug);
 	}
-
 }

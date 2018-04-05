@@ -20,4 +20,9 @@ public class Shape {
 	Color colorFill = new Color(Color.WHITE.getRGB());
 	Color colorText = new Color(Color.GRAY.getRGB());
 	
+	void setColors( Color cOutline, Color cFill ) {
+		this.colorOutline = cOutline;
+		this.colorFill = cFill;
+	}
+	
 }
