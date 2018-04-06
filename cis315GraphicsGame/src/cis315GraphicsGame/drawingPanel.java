@@ -203,6 +203,7 @@ public class drawingPanel extends Panel {
 				g.fillOval(xStart, yStart, width + 1, height + 1); // add 1 for outline width
 			}
 
+			// xor mode allows erasing previous lines
 			g.setXORMode(this.getBackground());
 			g.setColor(this.colorShapeOutline);
 			
