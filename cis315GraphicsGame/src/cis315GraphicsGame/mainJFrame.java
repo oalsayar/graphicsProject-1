@@ -31,21 +31,20 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import javax.swing.JCheckBoxMenuItem;
 
 /**
  * @author atmanning - atmanning@dbq.edu
  * 
- * (replace this header with your information)
+ *         (replace this header with your information)
  * 
- * This is the starting point for a Java-based
- * CAD program.  Although not a pure Model-View-Controller
- * (MVC) program, you are encouraged to separate
- * the drawing code from the file-saving/reading code.
- * Try to keep the drawing methods isolated to myPanel.
+ *         This is the starting point for a Java-based CAD program. Although not
+ *         a pure Model-View-Controller (MVC) program, you are encouraged to
+ *         separate the drawing code from the file-saving/reading code. Try to
+ *         keep the drawing methods isolated to myPanel.
  * 
- *  The initial graphic layout was done with the
- *  Eclipse designer to make it easier to adjust the
- *  look of the main page.
+ *         The initial graphic layout was done with the Eclipse designer to make
+ *         it easier to adjust the look of the main page.
  *
  */
 public class mainJFrame extends JFrame {
@@ -59,7 +58,6 @@ public class mainJFrame extends JFrame {
 	Label labelDebug; // for displaying status
 	drawingPanel panelDraw; // need access to this from paint()
 	ArrayList<Shape> myDrawing = new ArrayList<>();
-
 
 	/**
 	 * Launch the application.
@@ -83,7 +81,7 @@ public class mainJFrame extends JFrame {
 	public mainJFrame() {
 		setTitle("graphicsDrawing");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 628, 336);
+		setBounds(100, 100, 628, 401);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -135,33 +133,39 @@ public class mainJFrame extends JFrame {
 			}
 		});
 		mnDraw.add(mntmCircle);
-		
+
 		JMenu mnColors = new JMenu("Colors");
 		menuBar.add(mnColors);
-		
+
 		JMenuItem mntmColorchooser = new JMenuItem("Outline...");
 		mntmColorchooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// new colorJDialog().setVisible(true);
-				
 
 				panelDraw.chooseColorOutline();
-				
+
 			}
 		});
 		mnColors.add(mntmColorchooser);
-		
+
 		JMenuItem mntmFill = new JMenuItem("Fill...");
 		mntmFill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Color c = JColorChooser.showDialog(
-	                     contentPane,
-	                     "Choose Outline Color",
-	                     panelDraw.getBackground());
+				Color c = JColorChooser.showDialog(contentPane, "Choose Outline Color", panelDraw.getBackground());
 				panelDraw.setColorShapeFill(c);
 			}
 		});
 		mnColors.add(mntmFill);
+
+		JCheckBoxMenuItem chckbxmntmNoFill = new JCheckBoxMenuItem("Solid Fill");
+		chckbxmntmNoFill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// turn on/off fill based on checkbox status
+				JCheckBoxMenuItem me = (JCheckBoxMenuItem) e.getSource();
+				panelDraw.setSolidFill(me.isSelected());
+			}
+		});
+		mnColors.add(chckbxmntmNoFill);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -180,17 +184,17 @@ public class mainJFrame extends JFrame {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 
-				panelDraw.mouseReleased( e );
+				panelDraw.mouseReleased(e);
 			}
 		});
 
 		panelDraw.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-	
+
 				labelDebug.setText("m:" + e.getX() + "," + e.getY());
 
-				panelDraw.mouseMoved( e );
+				panelDraw.mouseMoved(e);
 
 			}
 
@@ -198,21 +202,21 @@ public class mainJFrame extends JFrame {
 			public void mouseDragged(MouseEvent e) {
 				labelDebug.setText("d:" + e.getX() + "," + e.getY());
 
-				panelDraw.mouseDragged(e );
+				panelDraw.mouseDragged(e);
 
 			}
 		});
 		panelDraw.setBackground(SystemColor.window);
-		panelDraw.setBounds(12, 10, 488, 256);
+		panelDraw.setBounds(12, 10, 488, 308);
 		contentPane.add(panelDraw);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(506, 36, 96, 153);
 		contentPane.add(scrollPane);
-		
-				textAreaHistory = new JTextArea();
-				scrollPane.setViewportView(textAreaHistory);
-				textAreaHistory.setBackground(new Color(240, 255, 255));
+
+		textAreaHistory = new JTextArea();
+		scrollPane.setViewportView(textAreaHistory);
+		textAreaHistory.setBackground(new Color(240, 255, 255));
 
 		Label label = new Label("History");
 		label.setBounds(526, 10, 58, 20);
